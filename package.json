@@ -1,0 +1,19 @@
+{
+  "name": "tribble",
+  "version": "0.0.1",
+  "description": "",
+  "bin": "bin/tribble.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/slvnfchr/tribble.git"
+  },
+  "author": "Sylvain Foucher",
+  "license": "MIT",
+  "dependencies": {
+    "eslint": "^3.4.0",
+    "eslint-config-airbnb-base": "^7.0.0",
+    "eslint-plugin-import": "^1.14.0",
+    "minimist": "^1.2.0"
+  }
+}
