@@ -1,13 +1,26 @@
 {
   "name": "tribble",
   "version": "0.0.1",
-  "description": "",
+  "description": "Boilerplate for static & microservices-based web applications",
+  "homepage": "https://github.com/slvnfchr/tribble",
   "bin": "bin/tribble.js",
-  "scripts": {},
+  "scripts": {
+    "test": "mocha --reporter spec test/*.js",
+    "lint:bin": "$(npm bin)/eslint ./bin; exit 0",
+    "lint:lib": "$(npm bin)/eslint ./lib; exit 0",
+    "lint:test": "$(npm bin)/eslint ./test; exit 0",
+    "lint": "npm run lint:bin && npm run lint:lib && npm run lint:test"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/slvnfchr/tribble.git"
   },
+  "keywords": [
+    "requirejs",
+    "modules",
+    "amd",
+    "bundle"
+  ],
   "author": "Sylvain Foucher",
   "license": "MIT",
   "dependencies": {
@@ -15,5 +28,9 @@
     "eslint-config-airbnb-base": "^7.0.0",
     "eslint-plugin-import": "^1.14.0",
     "minimist": "^1.2.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.0.2"
   }
 }
