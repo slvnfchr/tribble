@@ -19,7 +19,7 @@ if (args._.length === 0) {
 	throw new Error('No command not found');
 }
 
-const command = path.resolve(__dirname, args._[0]);
+const command = path.resolve(__dirname, `${args._[0]}.js`);
 try {
 	if (fs.statSync(command)) {
 		require(command)(args); // eslint-disable-line global-require
