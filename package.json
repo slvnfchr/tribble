@@ -1,6 +1,6 @@
 {
   "name": "tribble",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Boilerplate for static & microservices-based web applications",
   "homepage": "https://github.com/slvnfchr/tribble",
   "bin": "bin/tribble.js",
@@ -28,7 +28,6 @@
     "eslint": "^3.4.0",
     "eslint-config-airbnb-base": "^7.0.0",
     "eslint-plugin-import": "^1.14.0",
-    "mime-types": "^2.1.12",
     "minimist": "^1.2.0",
     "tribble-plugin": "latest"
   },

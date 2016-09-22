@@ -5,11 +5,8 @@
  * Serve command
  */
 
-const fs = require('fs');
 const path = require('path');
-const util = require('util');
-const stream = require('stream');
-const pluginLib = require('tribble-plugin');
+const plugins = require('../lib/plugins').load();
 const bs = require('browser-sync').create();
 
 module.exports = function serve(options) {
@@ -20,9 +17,7 @@ module.exports = function serve(options) {
 		middleware: [],
 	};
 	// Build a middleware per plugin output and build plugin chain
-	const plugins = pluginLib.util.load();
 	plugins.filter((plugin) => plugin.children.length === 0).forEach((plugin) => {
-		plugin.root.input.extensions
 		bsOptions.files = bsOptions.files.concat(plugin.root.input.extensions.map((extension) => `${options.source}/**/*.${extension}`));
 		plugin.output.extensions.forEach((extension) => {
 			bsOptions.middleware.push((req, res, next) => {
