@@ -6,6 +6,7 @@ const path = require('path');
 const Plugin = require('../lib/core/Plugin');
 const Task = require('../lib/core/Task');
 const Runner = require('../lib/core/Runner');
+const File = require('../lib/core/File');
 
 describe('Core classes', () => {
 
@@ -42,6 +43,47 @@ describe('Core classes', () => {
 		expect(runner).to.respondTo('getTaskTo');
 		done();
 	});
+
+	describe('File class', () => {
+
+		it('Required parameters for instantiation', (done) => {
+			expect(File.create).to.throw(Error);
+			expect(File.create.bind(File, { fullPath: null })).to.throw(Error);
+			expect(File.create.bind(File, { fullPath: '' })).to.throw(Error);
+			expect(File.create.bind(File, { fullPath: '/path/to/file' })).not.to.throw(Error);
+			done();
+		});
+
+		it('Minimal instantiation', (done) => {
+			const name = 'test.htm';
+			const file = File.create({ fullPath: path.resolve(__dirname, name) });
+			expect(file).to.have.all.keys('base', 'name', 'path', 'fullPath', 'extension', 'mediatype', 'contents');
+			expect(file.base).to.be.null;
+			expect(file.name).to.equal(name);
+			expect(file.path).to.be.null;
+			expect(file.fullPath).to.equal(path.resolve(__dirname, name));
+			expect(file.mediatype).to.equal('text/html');
+			expect(file.contents).to.be.null;
+			done();
+		});
+
+		it('Extended instantiation', (done) => {
+			const properties = { fullPath: __filename };
+			const file = File.create(properties);
+			Object.assign(properties, {
+				base: null,
+				contents: null,
+				path: null,
+				name: 'index.js',
+				extension: 'js',
+				mediatype: 'application/javascript',
+			});
+			expect(file).to.deep.equal(properties);
+			done();
+		});
+
+	});
+
 
 });
 
@@ -89,6 +131,7 @@ describe('Task execution', () => {
 			const chain = runner.getTaskTo(path.resolve(__dirname, 'src/test.css'));
 			chain.add((input) => {
 				const file = input.read();
+				expect(file.contents.trim()).to.equal('body { background-color:#FFF; }');
 				expect(file.mediatype).to.equal('text/css');
 				expect(file.preprocessed).to.be.true;
 				expect(file.transformed).to.be.true;
