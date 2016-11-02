@@ -1,0 +1,7 @@
+{
+	"/index": {
+		"tags": ["minifier"],
+		"consumes": ["text/css"],
+		"produces": ["text/css"]
+	}
+}

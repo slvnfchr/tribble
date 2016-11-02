@@ -6,7 +6,7 @@
  */
 
 const path = require('path');
-const plugins = require('../lib/plugins').load();
+const Runner = require('../lib/core/Runner');
 const bs = require('browser-sync').create();
 
 module.exports = function serve(options) {
@@ -16,28 +16,27 @@ module.exports = function serve(options) {
 		port: options.port || 3000,
 		middleware: [],
 	};
-	// Build a middleware per plugin output and build plugin chain
-	plugins.filter((plugin) => plugin.children.length === 0).forEach((plugin) => {
-		bsOptions.files = bsOptions.files.concat(plugin.root.input.extensions.map((extension) => `${options.source}/**/*.${extension}`));
-		plugin.output.extensions.forEach((extension) => {
+	const runner = new Runner(process.cwd());
+	runner.load(() => {
+		bsOptions.files = runner.extensions.input.map((extension) => `${options.source}/**/*.${extension}`);
+		// Build a middleware per extension
+		runner.extensions.output.forEach((extension) => {
 			bsOptions.middleware.push((req, res, next) => {
 				const matches = req.url.match(new RegExp(`\/(([^\.]+)\.${extension})$`, 'i'));
 				if (matches) {
-					let processStream = plugin.root.getSources(path.resolve(options.source, `.${req.url}`));
-					plugin.ancestors.forEach((ancestor) => {
-						processStream = processStream.pipe(ancestor);
-					});
-					processStream = processStream.pipe(plugin);
-					processStream.on('data', (file) => {
+					const pipeline = runner.getTaskTo(path.resolve(path.resolve(process.cwd(), options.source), `.${req.url}`));
+					pipeline.add((input) => {
+						const file = input.read();
 						Object.assign(res, { statusCode: 200 });
-						res.setHeader('Content-Type', file.type);
-						res.end(file.data);
+						res.setHeader('Content-Type', file.mediatype);
+						res.end(file.contents);
 					});
+					pipeline.run();
 				} else {
 					next();
 				}
 			});
 		});
+		bs.init(bsOptions);
 	});
-	bs.init(bsOptions);
 };

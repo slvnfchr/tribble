@@ -1,0 +1,7 @@
+{
+	"/index": {
+		"tags": ["transform"],
+		"consumes": ["text/css"],
+		"produces": ["text/css"]
+	}
+}
