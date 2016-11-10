@@ -1,0 +1,7 @@
+{
+  "scripts": {
+    "lint": "./node_modules/.bin/tribble lint",
+    "serve": "./node_modules/.bin/tribble serve",
+    "build": "./node_modules/.bin/tribble build"
+  }
+}

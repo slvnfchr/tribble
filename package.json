@@ -1,10 +1,11 @@
 {
   "name": "tribble",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Boilerplate for static & microservices-based web applications",
   "homepage": "https://github.com/slvnfchr/tribble",
   "bin": "bin/tribble.js",
   "scripts": {
+    "postinstall": "node ./lib/postinstall",
     "test": "mocha --reporter spec test/*.js",
     "lint:bin": "$(npm bin)/eslint ./bin; exit 0",
     "lint:lib": "$(npm bin)/eslint ./lib; exit 0",
