@@ -33,7 +33,12 @@ if (commands.length === 0) {
 }
 
 const command = path.resolve(__dirname, `${commands[0]}.js`);
-runtimeConfiguration = fs.statSync(runtimeConfiguration) ? JSON.parse(fs.readFileSync(runtimeConfiguration)) : {};
+try {
+	fs.statSync(runtimeConfiguration);
+	runtimeConfiguration = JSON.parse(fs.readFileSync(runtimeConfiguration));
+} catch (e) {
+	runtimeConfiguration = {};
+}
 
 try {
 	if (fs.statSync(command)) {
