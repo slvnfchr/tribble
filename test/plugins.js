@@ -10,7 +10,6 @@ const library = path.resolve(__dirname, '../lib/plugins/');
 const walkerPlugin = path.resolve(library, 'walker');
 const readerPlugin = path.resolve(library, 'reader');
 const writerPlugin = path.resolve(library, 'writer');
-const copierPlugin = path.resolve(library, 'copier');
 const removerPlugin = path.resolve(library, 'remover');
 
 describe('Built-in file manipulation plugins', () => {
@@ -130,24 +129,19 @@ describe('Built-in file manipulation plugins', () => {
 
 	describe('Writer', () => {
 
-		it('Initialization with text file', (done) => {
+		it('Initialization with single text file', (done) => {
 			const fullPath = path.resolve(__dirname, 'src/test.scss');
 			const targetPath = path.resolve(__dirname, 'dist/test.scss');
 			const graph = new core.Graph();
 			const reader = new core.Component(readerPlugin);
 			const writer = new core.Component(writerPlugin);
 			graph.initialize(reader, fullPath);
-			const rewriter = new core.Component((input, output) => {
-				const file = input.read();
-				Object.assign(file, { fullPath: targetPath });
-				output.send(file);
-			});
-			graph.connect(reader, 'out', rewriter, 'in');
-			graph.connect(rewriter, 'out', writer, 'in');
+			graph.connect(reader, 'out', writer, 'in');
+			graph.initialize(writer, { dest: targetPath });
 			const tester = new core.Component((input) => {
 				const file = input.read();
 				expect(file.fullPath).to.equal(targetPath);
-				expect(fs.readFileSync(targetPath, 'utf-8')).to.equal(file.contents);
+				expect(fs.readFileSync(file.fullPath, 'utf-8')).to.equal(file.contents);
 				const stats = fs.statSync(targetPath);
 				expect(stats.mtime.getTime()).to.be.above(file.stats.mtime.getTime());
 			});
@@ -157,7 +151,7 @@ describe('Built-in file manipulation plugins', () => {
 			});
 		});
 
-		it('Initialization with JSON file', (done) => {
+		it('Initialization with single JSON file', (done) => {
 			const fullPath = path.resolve(__dirname, '../package.json');
 			const targetPath = path.resolve(__dirname, 'dist/package.json');
 			const newKey = { foo: 'bar' };
@@ -168,11 +162,11 @@ describe('Built-in file manipulation plugins', () => {
 			const rewriter = new core.Component((input, output) => {
 				const file = input.read();
 				Object.assign(file.contents, newKey);
-				Object.assign(file, { fullPath: targetPath });
 				output.send(file);
 			});
 			graph.connect(reader, 'out', rewriter, 'in');
 			graph.connect(rewriter, 'out', writer, 'in');
+			graph.initialize(writer, { dest: targetPath });
 			const tester = new core.Component((input) => {
 				const file = input.read();
 				const data = require(fullPath); // eslint-disable-line global-require
@@ -187,14 +181,10 @@ describe('Built-in file manipulation plugins', () => {
 			});
 		});
 
-	});
-
-	describe('Copier', () => {
-
-		it('Initialization with destination path', (done) => {
+		it('Initialization with folder path', (done) => {
 			const graph = new core.Graph();
 			const walker = new core.Component(walkerPlugin);
-			const copier = new core.Component(copierPlugin);
+			const writer = new core.Component(writerPlugin);
 			const base = path.resolve(__dirname, 'tasks');
 			const dest = path.resolve(__dirname, 'dist');
 			const sources = {};
@@ -205,8 +195,8 @@ describe('Built-in file manipulation plugins', () => {
 				output.send(file);
 			});
 			graph.connect(walker, 'out', register, 'in');
-			graph.initialize(copier, { dest });
-			graph.connect(register, 'out', copier, 'in');
+			graph.initialize(writer, { dest });
+			graph.connect(register, 'out', writer, 'in');
 			const tester = new core.Component((input) => {
 				const file = input.read();
 				expect(file.base).to.equal(dest);
@@ -214,7 +204,7 @@ describe('Built-in file manipulation plugins', () => {
 				expect(() => fs.statSync(file.fullPath)).to.not.throw(Error);
 				delete sources[file.path];
 			});
-			graph.connect(copier, 'out', tester, 'in');
+			graph.connect(writer, 'out', tester, 'in');
 			graph.run(() => {
 				expect(Object.getOwnPropertyNames(sources).length).to.equal(0);
 				done();
