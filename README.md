@@ -19,7 +19,7 @@ Runtime configuration can be set through a _.tribblerc_ file with the following 
 
 ### Code linting
 
-Tribble is packaged with [ESLint](https://github.com/eslint/eslint), the most complete (code and style checking) and configurable/pluggable javascript linter tool, and [Airbnb's ESLint base configuration](https://github.com/airbnb/javascript), including ECMAScript 6+ rules. 
+Tribble is packaged with [ESLint](https://github.com/eslint/eslint) and [Airbnb's ESLint base configuration](https://github.com/airbnb/javascript), including ECMAScript 6+ rules. 
 The _source_ parameter can be used to override the default _source_ parameter specified in the _.tribblerc_ runtime configuration file.
 
 ```bash
@@ -30,11 +30,19 @@ $ ./node_modules/.bin/tribble lint [--source <folder>]
 
 Tribble is packaged with [Browsersync](https://www.browsersync.io).
 The _serve_ command launch a browsersync server with the built-in static server pointing to `folder` on port `number`.
-This command is intend to live preview web app's source file distribution.
+This command is intend to live preview web app's source file distribution and executed only preprocessor to aggregator plugins.
 The _source_ and _port_ parameters can be used to override the corresponding parameters specified in the _.tribblerc_ runtime configuration file.
 
 ```bash
 $ ./node_modules/.bin/tribble serve [--source <folder>] [--port <number>]
+```
+### Build
+
+The _build_ command executed all installed plugins (from preprocessor to packager) on the source files distribution `folder` and processed/aggregated assets are copied to the production-ready files distribution `target`.
+The _source_ and _target_ parameters can be used to override the corresponding parameters specified in the _.tribblerc_ runtime configuration file.
+
+```bash
+$ ./node_modules/.bin/tribble build [--source <folder>] [--target <folder>]
 ```
 
 ### Plugins
@@ -64,7 +72,7 @@ Public plugins are installed under the current project devDependencies flag.
 #### Private plugins
 
 You can also define private/local plugins like the public ones.  
-To do so, create a _tribble.json_ file for each plugin or for your whole project with the following structure (inspired by [Swagger specification](http://swagger.io/specification/#operationObject)) :
+To do so, create a _tribble.json_ file for one (or several) plugin(s) with the following structure (inspired by [Swagger specification](http://swagger.io/specification/#operationObject)) :
 
 ```javascript
 {

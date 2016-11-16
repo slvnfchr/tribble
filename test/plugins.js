@@ -18,7 +18,7 @@ describe('Built-in file manipulation plugins', () => {
 
 		it('Initialization with file path', (done) => {
 			const graph = new core.Graph();
-			const walker = new core.Component(walkerPlugin);
+			const walker = new core.Component(walkerPlugin, 10);
 			const base = __filename;
 			const files = [];
 			graph.initialize(walker, base);
@@ -36,7 +36,7 @@ describe('Built-in file manipulation plugins', () => {
 
 		it('Initialization with folder path', (done) => {
 			const graph = new core.Graph();
-			const walker = new core.Component(walkerPlugin);
+			const walker = new core.Component(walkerPlugin, 10);
 			const base = path.resolve(__dirname, 'tasks/stylesheets/');
 			const subfolders = ['minifier', 'postprocessor', 'preprocessor', 'transform'];
 			const files = [];
@@ -57,7 +57,7 @@ describe('Built-in file manipulation plugins', () => {
 
 		it('Initialization with folder path and filename regular expression mask', (done) => {
 			const graph = new core.Graph();
-			const walker = new core.Component(walkerPlugin);
+			const walker = new core.Component(walkerPlugin, 10);
 			const base = path.resolve(__dirname, 'tasks/stylesheets');
 			const mask = '.js$';
 			const files = [];
@@ -82,7 +82,7 @@ describe('Built-in file manipulation plugins', () => {
 		it('Initialization with file path', (done) => {
 			const fullPath = __filename;
 			const graph = new core.Graph();
-			const reader = new core.Component(readerPlugin);
+			const reader = new core.Component(readerPlugin, 10);
 			graph.initialize(reader, fullPath);
 			const tester = new core.Component((input) => {
 				const file = input.read();
@@ -98,7 +98,7 @@ describe('Built-in file manipulation plugins', () => {
 		it('Initialization with plain text file', (done) => {
 			const fullPath = path.resolve(__dirname, 'src/test.scss');
 			const graph = new core.Graph();
-			const reader = new core.Component(readerPlugin);
+			const reader = new core.Component(readerPlugin, 10);
 			graph.initialize(reader, fullPath);
 			const tester = new core.Component((input) => {
 				const file = input.read();
@@ -113,7 +113,7 @@ describe('Built-in file manipulation plugins', () => {
 		it('Initialization with JSON file', (done) => {
 			const fullPath = path.resolve(__dirname, '../package.json');
 			const graph = new core.Graph();
-			const reader = new core.Component(readerPlugin);
+			const reader = new core.Component(readerPlugin, 10);
 			graph.initialize(reader, fullPath);
 			const tester = new core.Component((input) => {
 				const file = input.read();
@@ -133,8 +133,8 @@ describe('Built-in file manipulation plugins', () => {
 			const fullPath = path.resolve(__dirname, 'src/test.scss');
 			const targetPath = path.resolve(__dirname, 'dist/test.scss');
 			const graph = new core.Graph();
-			const reader = new core.Component(readerPlugin);
-			const writer = new core.Component(writerPlugin);
+			const reader = new core.Component(readerPlugin, 10);
+			const writer = new core.Component(writerPlugin, 10);
 			graph.initialize(reader, fullPath);
 			graph.connect(reader, 'out', writer, 'in');
 			graph.initialize(writer, { dest: targetPath });
@@ -156,8 +156,8 @@ describe('Built-in file manipulation plugins', () => {
 			const targetPath = path.resolve(__dirname, 'dist/package.json');
 			const newKey = { foo: 'bar' };
 			const graph = new core.Graph();
-			const reader = new core.Component(readerPlugin);
-			const writer = new core.Component(writerPlugin);
+			const reader = new core.Component(readerPlugin, 10);
+			const writer = new core.Component(writerPlugin, 10);
 			graph.initialize(reader, { fullPath });
 			const rewriter = new core.Component((input, output) => {
 				const file = input.read();
@@ -183,8 +183,8 @@ describe('Built-in file manipulation plugins', () => {
 
 		it('Initialization with folder path', (done) => {
 			const graph = new core.Graph();
-			const walker = new core.Component(walkerPlugin);
-			const writer = new core.Component(writerPlugin);
+			const walker = new core.Component(walkerPlugin, 10);
+			const writer = new core.Component(writerPlugin, 10);
 			const base = path.resolve(__dirname, 'tasks');
 			const dest = path.resolve(__dirname, 'dist');
 			const sources = {};
@@ -217,8 +217,8 @@ describe('Built-in file manipulation plugins', () => {
 
 		it('Initialization with file distribution path', (done) => {
 			const graph = new core.Graph();
-			const walker = new core.Component(walkerPlugin);
-			const remover = new core.Component(removerPlugin);
+			const walker = new core.Component(walkerPlugin, 10);
+			const remover = new core.Component(removerPlugin, 10);
 			const base = path.resolve(__dirname, 'dist');
 			const sources = {};
 			graph.initialize(walker, { base });

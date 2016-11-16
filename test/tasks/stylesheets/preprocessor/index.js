@@ -3,8 +3,10 @@
 
 module.exports = (input, output) => {
 	const file = input.read();
-	file.mediatype = 'text/css';
-	file.preprocessed = true;
+	Object.assign(file, {
+		fullPath: file.fullPath.replace(/\.[^\.]+$/i, '.css'), // change extension
+		preprocessed: true,
+	});
 	output.send(file);
 };
 

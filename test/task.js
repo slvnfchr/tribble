@@ -44,10 +44,10 @@ describe('Task execution', () => {
 	});
 
 	it('Runner reverse task chain running', (done) => {
-		const runner = new Runner(path.resolve(__dirname, 'tasks/stylesheets'));
+		const runner = new Runner(path.resolve(__dirname, 'tasks'));
 		runner.load(() => {
 			const chain = runner.getTaskTo(path.resolve(__dirname, 'src/test.css'));
-			chain.add((input) => {
+			chain.pipe((input) => {
 				const file = input.read();
 				expect(file.contents.trim()).to.equal('body { background-color:#FFF; }');
 				expect(file.mediatype).to.equal('text/css');
@@ -55,8 +55,23 @@ describe('Task execution', () => {
 				expect(file.transformed).to.be.true;
 				expect(file.postprocessed).to.be.true;
 				expect(file.minified).to.be.true;
+				done();
 			});
-			chain.run(done);
+			chain.run();
+		});
+	});
+
+	it('Runner build task chain running', (done) => {
+		const runner = new Runner(path.resolve(__dirname, 'tasks'));
+		runner.load(() => {
+			const chain = runner.getAllTasks(path.resolve(__dirname, 'src/'), path.resolve(__dirname, 'dist/'));
+			chain.pipe((input) => {
+				const file = input.read();
+				expect(file.base).to.equal(path.resolve(__dirname, 'dist/'));
+				expect(file.name).to.equal('test.css');
+				done();
+			});
+			chain.run();
 		});
 	});
 

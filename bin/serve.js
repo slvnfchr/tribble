@@ -24,14 +24,14 @@ module.exports = function serve(options) {
 			bsOptions.middleware.push((req, res, next) => {
 				const matches = req.url.match(new RegExp(`\/(([^\.]+)\.${extension})$`, 'i'));
 				if (matches) {
-					const pipeline = runner.getTaskTo(path.resolve(path.resolve(process.cwd(), options.source), `.${req.url}`));
-					pipeline.add((input) => {
+					const task = runner.getTaskTo(path.resolve(path.resolve(process.cwd(), options.source), `.${req.url}`));
+					task.pipe((input) => {
 						const file = input.read();
 						Object.assign(res, { statusCode: 200 });
 						res.setHeader('Content-Type', file.mediatype);
 						res.end(file.contents);
 					});
-					pipeline.run();
+					task.run();
 				} else {
 					next();
 				}
