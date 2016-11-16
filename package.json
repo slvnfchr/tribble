@@ -1,6 +1,6 @@
 {
   "name": "tribble",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Boilerplate for static & microservices-based web applications",
   "homepage": "https://github.com/slvnfchr/tribble",
   "bin": "bin/tribble.js",

@@ -161,7 +161,9 @@ describe('Built-in file manipulation plugins', () => {
 			graph.initialize(reader, { fullPath });
 			const rewriter = new core.Component((input, output) => {
 				const file = input.read();
-				Object.assign(file.contents, newKey);
+				const data = JSON.parse(JSON.stringify(file.contents));
+				Object.assign(data, newKey);
+				Object.assign(file, { contents: data });
 				output.send(file);
 			});
 			graph.connect(reader, 'out', rewriter, 'in');
