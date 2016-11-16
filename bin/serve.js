@@ -11,7 +11,7 @@ const bs = require('browser-sync').create();
 
 module.exports = function serve(options) {
 	const bsOptions = {
-		server: options.source,
+		server: { baseDir: options.source, index: 'index.htm' },
 		files: [],
 		port: options.port || 3000,
 		middleware: [],
@@ -22,9 +22,10 @@ module.exports = function serve(options) {
 		// Build a middleware per extension
 		runner.extensions.output.forEach((extension) => {
 			bsOptions.middleware.push((req, res, next) => {
-				const matches = req.url.match(new RegExp(`\/(([^\.]+)\.${extension})$`, 'i'));
+				const url = req.url.match(/\/$/i) ? `${req.url}${bsOptions.server.index}` : req.url;
+				const matches = url.match(new RegExp(`\/(([^\.]+)\.${extension})$`, 'i'));
 				if (matches) {
-					const task = runner.getTaskTo(path.resolve(path.resolve(process.cwd(), options.source), `.${req.url}`));
+					const task = runner.getTaskTo(path.resolve(path.resolve(process.cwd(), options.source), `.${url}`));
 					task.pipe((input) => {
 						const file = input.read();
 						Object.assign(res, { statusCode: 200 });
