@@ -13,6 +13,6 @@ module.exports = function serve(options) {
 	runner.load(() => {
 		const source = path.resolve(process.cwd(), options.source);
 		const target = path.resolve(process.cwd(), options.target);
-		runner.getAllTasks(source, target).run();
+		runner.getBuildTasks(source, target).run();
 	});
 };

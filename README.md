@@ -30,7 +30,7 @@ $ ./node_modules/.bin/tribble lint [--source <folder>]
 
 Tribble is packaged with [Browsersync](https://www.browsersync.io).
 The _serve_ command launch a browsersync server with the built-in static server pointing to `folder` on port `number`.
-This command is intend to live preview web app's source file distribution and executed only preprocessor to aggregator plugins.
+This command is intend to live preview web app's source file distribution and executed only _preprocessor_ to _postprocessor_ plugins.
 The _source_ and _port_ parameters can be used to override the corresponding parameters specified in the _.tribblerc_ runtime configuration file.
 
 ```bash
@@ -38,7 +38,7 @@ $ ./node_modules/.bin/tribble serve [--source <folder>] [--port <number>]
 ```
 ### Build
 
-The _build_ command executed all installed plugins (from preprocessor to packager) on the source files distribution `folder` and processed/aggregated assets are copied to the production-ready files distribution `target`.
+The _build_ command executed all installed plugins (from _preprocessor_ to _minifier_) on the source files distribution `folder` and processed/aggregated assets are copied to the production-ready files distribution `target`.
 The _source_ and _target_ parameters can be used to override the corresponding parameters specified in the _.tribblerc_ runtime configuration file.
 
 ```bash
@@ -89,13 +89,16 @@ To do so, create a _tribble.json_ file for one (or several) plugin(s) with the f
 
 Plugin characteristics (defined as tags) are used to order plugins and build tasks pipelines.  
 They can have the following values :
-- _preprocessor_ (ex: [SASS](http://sass-lang.com/), [Coffeescript](http://coffeescript.org/))
+- _importer_ (ex: data importer from a remote API)
+- _linter_ (ex: [ESLint](http://eslint.org))
+- _preprocessor_ (ex: [SASS](http://sass-lang.com/), [Coffeescript](http://coffeescript.org/), templating engine)
 - _transform_ (ex: any transformation plugin)
 - _postprocessor_ (ex: [postCSS](http://postcss.org/))
-- _aggregator_ (ex: templating engine)
+- _indexer_ (ex: indexing of processed/produced files before bundling)
 - _bundler_ (ex: [r.js](http://requirejs.org/docs/optimization.html))
 - _minifier_ (ex: [Closure](https://github.com/google/closure-compiler-js))
 - _packager_ (ex: zip compression, [Electron](http://electron.atom.io/))
+- _deployer_ (ex: [AWS SDK](https://aws.amazon.com/sdk-for-node-js/))
 
 Each plugin module is defined as follow :
 

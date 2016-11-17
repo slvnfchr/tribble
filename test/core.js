@@ -14,6 +14,7 @@ describe('Core classes', () => {
 		const plugin = new Plugin();
 		expect(plugin).to.have.property('type');
 		expect(plugin).to.have.property('priority');
+		expect(plugin).to.have.property('phase');
 		expect(plugin).to.have.property('mediatypes');
 		expect(plugin.mediatypes).to.have.property('input');
 		expect(plugin.mediatypes).to.have.property('output');

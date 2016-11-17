@@ -30,16 +30,13 @@ describe('Task execution', () => {
 			expect(postprocessor.ancestors.length).to.equal(2);
 			expect(postprocessor.ancestors[0]).to.equal(preprocessor);
 			expect(postprocessor.ancestors[1]).to.equal(transform);
-			expect(postprocessor.children.length).to.equal(1);
-			expect(postprocessor.children[0]).to.equal(minifier);
-			expect(minifier.parent).to.equal(postprocessor);
-			expect(minifier.ancestors.length).to.equal(3);
-			expect(minifier.ancestors[0]).to.equal(preprocessor);
-			expect(minifier.ancestors[1]).to.equal(transform);
-			expect(minifier.ancestors[2]).to.equal(postprocessor);
-			expect(minifier.children.length).to.equal(0);
+			expect(postprocessor.children.length).to.equal(0);
 			expect(runner.mediatypes.input).to.deep.equal(preprocessor.mediatypes.input);
-			expect(runner.mediatypes.output).to.deep.equal(minifier.mediatypes.output);
+			expect(runner.mediatypes.output).to.deep.equal(postprocessor.mediatypes.output);
+			// minification is not part of single file processing phase
+			expect(minifier.parent).to.be.null;
+			expect(minifier.ancestors.length).to.equal(0);
+			expect(minifier.children.length).to.equal(0);
 			done();
 		});
 	});
@@ -56,7 +53,7 @@ describe('Task execution', () => {
 				expect(file.preprocessed).to.be.true;
 				expect(file.transformed).to.be.true;
 				expect(file.postprocessed).to.be.true;
-				expect(file.minified).to.be.true;
+				expect(file.minified).to.be.undefined; // Minification is not part of processing phase
 				done();
 			});
 			chain.run();
@@ -66,12 +63,16 @@ describe('Task execution', () => {
 	it('Runner build task chain running', (done) => {
 		const runner = new Runner(path.resolve(__dirname, 'tasks'));
 		runner.load(() => {
-			const chain = runner.getAllTasks(path.resolve(__dirname, 'src/'), path.resolve(__dirname, 'dist/'));
+			const chain = runner.getBuildTasks(path.resolve(__dirname, 'src/'), path.resolve(__dirname, 'dist/'));
 			chain.pipe((input) => {
 				const file = input.read();
 				expect(file).to.be.instanceof(File);
 				expect(file.base).to.equal(path.resolve(__dirname, 'dist/'));
 				expect(file.name).to.equal('test.css');
+				expect(file.preprocessed).to.be.undefined;
+				expect(file.transformed).to.be.undefined;
+				expect(file.postprocessed).to.be.undefined;
+				expect(file.minified).to.be.true; // Minification is part of build
 				done();
 			});
 			chain.run();
