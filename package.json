@@ -4,6 +4,7 @@
   "description": "Boilerplate for static & microservices-based web applications",
   "homepage": "https://github.com/slvnfchr/tribble",
   "bin": "bin/tribble.js",
+  "main": "lib/index.js",
   "scripts": {
     "postinstall": "node ./lib/postinstall",
     "test": "mocha --reporter spec test/*.js",

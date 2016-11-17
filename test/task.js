@@ -3,19 +3,20 @@
 
 const expect = require('chai').expect;
 const path = require('path');
-const Runner = require('../lib/core/Runner');
-
-const getPlugin = (runner, name) => runner.plugins.filter(plugin => plugin.handler.match(new RegExp(name, 'i')))[0];
+const Runner = require('tribble').Runner;
+const File = require('tribble').File;
+const Plugin = require('tribble').Plugin;
 
 describe('Task execution', () => {
 
 	it('Runner plugins graph loading', (done) => {
 		const runner = new Runner(path.resolve(__dirname, 'tasks/stylesheets'));
 		runner.load(() => {
-			const preprocessor = getPlugin(runner, 'preprocessor'); // ex: SASS
-			const transform = getPlugin(runner, 'transform'); // any CSS transformation
-			const postprocessor = getPlugin(runner, 'postprocessor'); // ex: postCSS
-			const minifier = getPlugin(runner, 'minifier'); // ex: clean-css
+			const preprocessor = runner.getPluginByPath('preprocessor'); // ex: SASS
+			const transform = runner.getPluginByPath('transform'); // any CSS transformation
+			const postprocessor = runner.getPluginByPath('postprocessor'); // ex: postCSS
+			const minifier = runner.getPluginByPath('minifier'); // ex: clean-css
+			expect(preprocessor).to.be.instanceof(Plugin);
 			expect(preprocessor.parent).to.be.null;
 			expect(preprocessor.ancestors.length).to.equal(0);
 			expect(preprocessor.children.length).to.equal(1);
@@ -49,6 +50,7 @@ describe('Task execution', () => {
 			const chain = runner.getTaskTo(path.resolve(__dirname, 'src/test.css'));
 			chain.pipe((input) => {
 				const file = input.read();
+				expect(file).to.be.instanceof(File);
 				expect(file.contents.trim()).to.equal('body { background-color:#FFF; }');
 				expect(file.mediatype).to.equal('text/css');
 				expect(file.preprocessed).to.be.true;
@@ -67,6 +69,7 @@ describe('Task execution', () => {
 			const chain = runner.getAllTasks(path.resolve(__dirname, 'src/'), path.resolve(__dirname, 'dist/'));
 			chain.pipe((input) => {
 				const file = input.read();
+				expect(file).to.be.instanceof(File);
 				expect(file.base).to.equal(path.resolve(__dirname, 'dist/'));
 				expect(file.name).to.equal('test.css');
 				done();
